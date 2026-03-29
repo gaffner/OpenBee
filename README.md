@@ -117,7 +117,7 @@ $ New-IISSite -Name "WebApp" -PhysicalPath "C:\inetpub\wwwroot\webapp" -BindingI
 
 🧠 Thinking... WEB-SRV-01 is behind gateway-10.0.0.1 (Cisco ASA 5506-X).
    To open it to the internet I need to configure port forwarding on the
-   router. I have credentials for this device. Connecting via SSH...
+   router. Activating the Cisco bee... 🐝
 
 $ ssh admin@10.0.0.1 "show running-config | include interface"
 [output] interface GigabitEthernet0/0 (outside)
