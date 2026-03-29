@@ -177,8 +177,8 @@ $ Add-ADGroupMember -Identity "HR" -Members "jdubian"
 
 ### Example 3: Who Logged In via RDP?
 
-**You (on FILE-SRV-02):**
-> Who logged on recently using RDP to this machine?
+**You:**
+> Who logged on recently using RDP to FILE-SRV-02?
 
 **🐝 OpenBee:**
 ```
