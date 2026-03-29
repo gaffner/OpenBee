@@ -304,6 +304,6 @@ MIT — Free as honey. 🍯
 
 <p align="center">
   <strong>🐝 OpenBee</strong><br/>
-  <em>Your bees. Your hive. Your network.</em><br/><br/>
+  <em>Our bees. Your hive. One network.</em><br/><br/>
   Stop doing IT. Let the bees do IT for you.
 </p>
