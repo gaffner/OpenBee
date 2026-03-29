@@ -158,17 +158,17 @@ $ Set-GPRegistryValue -Name "Install Google Chrome" -Key "HKLM\SOFTWARE\Policies
 ```
 
 **You:**
-> Add a new domain user called Sarah Cohen and add her to the HR group.
+> Add a new domain user called John Dubian and add him to the HR group.
 
 **🐝 OpenBee:**
 ```
-$ New-ADUser -Name "Sarah Cohen" -SamAccountName "scohen" -UserPrincipalName "scohen@acme.local" -Path "OU=Users,DC=acme,DC=local" -AccountPassword (ConvertTo-SecureString "W3lc0me!2026" -AsPlainText -Force) -Enabled $true
-[output] User "Sarah Cohen" created successfully.
+$ New-ADUser -Name "John Dubian" -SamAccountName "jdubian" -UserPrincipalName "jdubian@acme.local" -Path "OU=Users,DC=acme,DC=local" -AccountPassword (ConvertTo-SecureString "W3lc0me!2026" -AsPlainText -Force) -Enabled $true
+[output] User "John Dubian" created successfully.
 
-$ Add-ADGroupMember -Identity "HR" -Members "scohen"
-[output] User "scohen" added to group "HR".
+$ Add-ADGroupMember -Identity "HR" -Members "jdubian"
+[output] User "jdubian" added to group "HR".
 
-✓ Done! User Sarah Cohen (scohen@acme.local) has been created and added to
+✓ Done! User John Dubian (jdubian@acme.local) has been created and added to
   the HR group. Temporary password: W3lc0me!2026 (user will be prompted to
   change on first login).
 ```
@@ -193,7 +193,7 @@ $ python (local)
   | Date                | User              | Source IP      |
   |---------------------|-------------------|----------------|
   | 2026-03-28 14:22:01 | ACME\jsmith       | 10.0.0.105     |
-  | 2026-03-28 09:15:44 | ACME\scohen       | 10.0.0.112     |
+  | 2026-03-28 09:15:44 | ACME\jdubian      | 10.0.0.112     |
   | 2026-03-27 18:30:12 | ACME\admin         | 10.0.0.1       |
   | 2026-03-27 11:05:33 | ACME\jsmith       | 10.0.0.105     |
   | 2026-03-26 16:48:00 | ACME\mwilliams    | 10.0.0.88      |
