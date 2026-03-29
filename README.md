@@ -2,8 +2,6 @@
   <img src="screens/openbee-logo.png" alt="OpenBee Logo" width="200"/>
 </p>
 
-<h1 align="center">🐝 OpenBee</h1>
-
 <p align="center">
   <em>"Buzz Buzz! Let the bees do the hard work for you."</em><br/><br/>
   <strong>AI-Powered Network Management & Discovery</strong>
