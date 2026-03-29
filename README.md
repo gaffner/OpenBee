@@ -61,21 +61,15 @@ That's it. The device appears in your hive graph, and OpenBee automatically disc
 
 ### Discovery — The Scout Bees
 
-When you add a device, OpenBee deploys **scout bees** — lightweight commands that map the device and everything around it:
+When you add a device, OpenBee deploys **scout bees** that map the device and everything around it. The bees gather:
 
-| Platform | Commands | What They Find |
-|----------|----------|----------------|
-| **Windows** | `ipconfig /all` | Network interfaces, IPs, MACs, DNS, DHCP, gateways |
-| | `arp -a` | Every device on the local network |
-| | `nbtstat -n` | NetBIOS names and services |
-| | `systeminfo` | OS, hardware, domain, memory |
-| | `netstat -ano` + `tasklist` | Listening services with process names |
-| **Linux/macOS** | `ip addr` | Network interfaces, IPs, MACs |
-| | `ip neigh` | ARP neighbor table |
-| | `ip route` | Default gateway |
-| | `/etc/resolv.conf` | DNS servers |
-| | `hostnamectl` + `/proc/meminfo` | OS, kernel, hostname, memory |
-| | `ss -tlnp` | Listening services with process names |
+🔹 **Network interfaces** — IPs, MACs, subnet masks, connection status
+🔹 **ARP neighbors** — every device visible on the local network
+🔹 **Routing tables** — default gateways and network routes
+🔹 **DNS & DHCP servers** — who's serving names and addresses
+🔹 **System information** — OS, hostname, hardware, domain, memory
+🔹 **Running services** — every listening port and the process behind it
+🔹 **NetBIOS names** — machine identities on Windows networks
 
 From this data, OpenBee builds your hive:
 
