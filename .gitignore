@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Environment / secrets
+.env
+*.env.local
+
+# Database
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+package-lock.json
+
+# Build output
+client/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Temp files
+*.tmp
+*.log
+
+# Test artifacts
+test-icon.html
+test-icon.cjs
+
+# discovery-engine (standalone version - merged into server/)
+# Keep it out of the main repo if present
