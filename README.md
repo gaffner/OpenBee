@@ -148,9 +148,7 @@ $ ssh admin@10.0.0.1 "nat (inside,outside) static interface service tcp 80 80"
 
 ---
 
-### Example 2: Managing Active Directory — No More UIs from 2000
-
-Forget the old MMC snap-ins. Talk to your Domain Controller like it's 2026.
+### Example 2: Managing Active Directory
 
 **You (on DC-01):**
 > Create a Group Policy that installs Google Chrome silently on all domain computers.
