@@ -85,13 +85,15 @@ From this data, OpenBee builds your hive:
 
 Once a device is in the hive, the AI Console is your command center. The worker bees can:
 
-**Run remote commands** on the device via SSH or WinRM. **Fetch files** from the device for local analysis. **Execute local Python scripts** for parsing binary files, crunching data, or processing logs. **Chain actions** across multiple iterations — fetch a file, parse it, run more commands, and synthesize a final answer.
+**Run remote commands** on the device via SSH or WinRM. **Fetch files** from the device for local analysis. **Execute Python scripts in an isolated environment on the Hive Mind** for parsing binary files, crunching data, or processing logs. **Chain actions** across multiple iterations — fetch a file, parse it, run more commands, and synthesize a final answer.
 
 The AI maintains **conversation history per device**, so it remembers what you discussed earlier. Ask a follow-up and it knows the context.
 
 ### Cross-Device Intelligence — The Hive Mind
 
-OpenBee maintains a **global context** of your entire network. This means the AI understands relationships between devices — which machine is the router, which is the DNS server, which is the domain controller. This enables **complex multi-device operations from a single prompt**.
+The Hive Mind is the central brain of OpenBee. It is where the server code resides, where all API requests are processed, and where remote connection sessions to your devices are established. It is the most crucial asset in the hive.
+
+The Hive Mind maintains a **global context** of your entire network. It understands the relationships between devices — which machine is the router, which is the DNS server, which is the domain controller. This enables **complex multi-device operations from a single prompt**. When a Python script needs to run for parsing files or crunching data, it executes in an isolated environment on the Hive Mind, keeping your managed devices untouched.
 
 ---
 
@@ -202,7 +204,7 @@ $ python (local)
   Last RDP login was by jsmith from 10.0.0.105, today at 2:22 PM.
 ```
 
-The AI fetched the Windows Event Log binary file, ran a local Python script to parse the .evtx format, and presented the results, all from a single prompt.
+The AI fetched the Windows Event Log binary file, ran a Python script in an isolated environment on the Hive Mind to parse the .evtx format, and presented the results, all from a single prompt.
 
 ---
 
