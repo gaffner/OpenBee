@@ -41,5 +41,8 @@ Desktop.ini
 test-icon.html
 test-icon.cjs
 
+# Auto-generated files
+client/src/assets/icons-generated.ts
+
 # discovery-engine (standalone version - merged into server/)
 # Keep it out of the main repo if present
