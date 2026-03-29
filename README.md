@@ -124,7 +124,7 @@ $ New-IISSite -Name "WebApp" -PhysicalPath "C:\inetpub\wwwroot\webapp" -BindingI
 ```
 
 **You:**
-> Now expose it to the internet.
+> Open it to the internet.
 
 **🐝 OpenBee:**
 ```
