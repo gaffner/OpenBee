@@ -1,0 +1,31 @@
+import type { Topology, Device, Network } from "./types";
+
+const BASE = "/api";
+
+export async function fetchNetworks(): Promise<Network[]> {
+  const res = await fetch(`${BASE}/networks`);
+  if (!res.ok) throw new Error("Failed to fetch networks");
+  return res.json();
+}
+
+export async function fetchTopology(networkId: number = 1): Promise<Topology> {
+  const res = await fetch(`${BASE}/topology?network_id=${networkId}`);
+  if (!res.ok) throw new Error("Failed to fetch topology");
+  return res.json();
+}
+
+export async function fetchDevice(id: number): Promise<Device> {
+  const res = await fetch(`${BASE}/devices/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch device");
+  return res.json();
+}
+
+export async function createDevice(device: Omit<Device, "id">): Promise<Device> {
+  const res = await fetch(`${BASE}/devices`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(device),
+  });
+  if (!res.ok) throw new Error("Failed to create device");
+  return res.json();
+}

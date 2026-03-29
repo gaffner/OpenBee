@@ -32,10 +32,10 @@ No more clicking through UIs from the year 2000. No more memorizing PowerShell c
 ## 📸 The Hive at a Glance
 
 <p align="center">
-  <img src="screens/graph.png" alt="OpenBee Network Graph" width="800"/>
+  <img src="screens/ui-main.png" alt="OpenBee Network Graph" width="800"/>
 </p>
 
-*Your entire network, visualized as a hive. Managed devices glow. Unmanaged devices are discovered automatically. Double-click any managed device to open the AI Console.*
+*Your entire network, visualized as a hive. Click any device to see its details — IP, MAC, OS, hardware, services, and listening ports. Managed devices glow. Unmanaged devices are discovered automatically. Click "Open AI Console" to start talking to any device.*
 
 ---
 
@@ -50,6 +50,10 @@ Getting started with OpenBee is as simple as adding your first device:
 5. **Watch the bees work** — the scanner connects, runs discovery commands, and maps the device live
 
 That's it. The device appears in your hive graph, and OpenBee automatically discovers every other device it can see — gateways, DNS servers, DHCP servers, ARP neighbors — all added to the graph as unmanaged devices. Toggle them on or off with the "Unmanaged" switch.
+
+<p align="center">
+  <img src="screens/ui-add-device.png" alt="OpenBee Add Device Wizard" width="800"/>
+</p>
 
 **To manage any device, just double-click it on the graph.** You're instantly in a prompt screen where you can query and act. That's the entire workflow. Click and talk.
 
