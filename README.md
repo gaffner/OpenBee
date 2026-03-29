@@ -298,7 +298,7 @@ From the web console, generate an agent installer. Run it on the target machine.
 
 ## 📄 License
 
-MIT — Free as honey. 🍯
+MIT + Commons Clause — Free to use, modify, and self-host. Not for resale. 🍯
 
 ---
 
