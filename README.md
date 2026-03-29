@@ -27,7 +27,7 @@ OpenBee works the same way. **You are the Queen.** Your network is the hive. And
 
 No more clicking through UIs from the year 2000. No more memorizing PowerShell cmdlets. No more SSH-ing into 15 machines to check one thing.
 
-**Just talk to the hive. The bees will handle it.**
+**Just say your words, my Queen. The bees will handle it.**
 
 ---
 
@@ -37,7 +37,7 @@ No more clicking through UIs from the year 2000. No more memorizing PowerShell c
   <img src="screens/graph.png" alt="OpenBee Network Graph" width="800"/>
 </p>
 
-*Your entire network, visualized as a hive. Managed devices glow. Unmanaged devices are discovered automatically. Double-click any device to open the AI Console.*
+*Your entire network, visualized as a hive. Managed devices glow. Unmanaged devices are discovered automatically. Double-click any managed device to open the AI Console.*
 
 ---
 
