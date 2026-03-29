@@ -258,6 +258,8 @@ OpenBee works with **any Windows or Unix-like machine**. If it has a network int
 
 🔄 **Continuous Monitoring** — bees that keep watching for changes in your hive
 
+⏰ **Automation** — schedule recurring tasks to run on any device at set intervals (e.g. clean temp files every night, pull latest code every hour, restart a service weekly)
+
 ---
 
 ## 🐝 Adding Devices to the Hive
