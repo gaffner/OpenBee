@@ -41,7 +41,9 @@ class DeviceBase(BaseModel):
     managed: int = 1
 
 class DeviceCreate(DeviceBase):
-    pass
+    # Credentials for remote access (not persisted to DB, stored in memory)
+    cred_username: Optional[str] = None
+    cred_password: Optional[str] = None
 
 class DeviceOut(DeviceBase):
     id: int

@@ -85,6 +85,12 @@ Once a device is in the hive, the AI Console is your command center. The worker 
 
 The AI maintains **conversation history per device**, so it remembers what you discussed earlier. Ask a follow-up and it knows the context.
 
+<p align="center">
+  <img src="screens/ui-ai-console.png" alt="OpenBee AI Console" width="800"/>
+</p>
+
+*The AI Console in action — ask questions, run commands, create users, inspect files, all through natural language.*
+
 ### Cross-Device Intelligence — The Hive Mind
 
 The Hive Mind is the central brain of OpenBee. It is where the server code resides, where all API requests are processed, and where remote connection sessions to your devices are established. It is the most crucial asset in the hive.

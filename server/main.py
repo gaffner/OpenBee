@@ -49,7 +49,7 @@ def get_device(device_id: int, db: Session = Depends(get_db)):
 
 @app.post("/api/devices", response_model=DeviceOut)
 def create_device(payload: DeviceCreate, db: Session = Depends(get_db)):
-    data = payload.model_dump()
+    data = payload.model_dump(exclude={"cred_username", "cred_password"})
     mac = data.get("mac")
     if mac and not data.get("vendor") and data.get("managed") == 0:
         vendor = lookup_vendor(mac)
@@ -60,6 +60,10 @@ def create_device(payload: DeviceCreate, db: Session = Depends(get_db)):
     db.add(device)
     db.commit()
     db.refresh(device)
+    # Store credentials for AI chat if provided
+    if payload.cred_username and payload.cred_password:
+        protocol = data.get("connection_method", "winrm" if data.get("os_type") == "windows" else "ssh")
+        cred_store.store(device.id, data["ip"], payload.cred_username, payload.cred_password, protocol)
     return device
 
 
@@ -104,6 +108,12 @@ def store_credentials(
         raise HTTPException(status_code=404, detail="Device not found")
     cred_store.store(device_id, device.ip, username, password, protocol, use_ssl)
     return {"status": "ok", "device_id": device_id}
+
+
+@app.get("/api/devices/{device_id}/has-credentials")
+def has_credentials(device_id: int):
+    """Check if credentials are stored for a device."""
+    return {"has_credentials": cred_store.get(device_id) is not None}
 
 
 # ── AI Chat (SSE) ────────────────────────────────────────────────────────

@@ -20,7 +20,7 @@ export async function fetchDevice(id: number): Promise<Device> {
   return res.json();
 }
 
-export async function createDevice(device: Omit<Device, "id">): Promise<Device> {
+export async function createDevice(device: Record<string, any>): Promise<Device> {
   const res = await fetch(`${BASE}/devices`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -28,4 +28,11 @@ export async function createDevice(device: Omit<Device, "id">): Promise<Device> 
   });
   if (!res.ok) throw new Error("Failed to create device");
   return res.json();
+}
+
+export async function hasCredentials(deviceId: number): Promise<boolean> {
+  const res = await fetch(`${BASE}/devices/${deviceId}/has-credentials`);
+  if (!res.ok) return false;
+  const data = await res.json();
+  return data.has_credentials;
 }

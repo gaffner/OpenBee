@@ -15,11 +15,23 @@ export default function AIConsole({ device, totalDevices, onBack }: Props) {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [checkingCreds, setCheckingCreds] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [protocol, setProtocol] = useState(device.connection_method ?? (device.os_type === "windows" ? "winrm" : "ssh"));
   const [credError, setCredError] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Check if credentials already exist on mount
+  useEffect(() => {
+    fetch(`/api/devices/${device.id}/has-credentials`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.has_credentials) setConnected(true);
+        setCheckingCreds(false);
+      })
+      .catch(() => setCheckingCreds(false));
+  }, [device.id]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [blocks, busy]);
 
@@ -103,6 +115,18 @@ export default function AIConsole({ device, totalDevices, onBack }: Props) {
   };
 
   // Credentials form
+  if (checkingCreds) {
+    return (
+      <div className="ai-page">
+        <header className="ai-page-header">
+          <button className="ai-back" onClick={onBack}>&larr; Back to Graph</button>
+          <div className="ai-page-title"><span className="ai-title-dot" />AI Console</div>
+        </header>
+        <div className="ai-cred-wrap"><div className="loader" /></div>
+      </div>
+    );
+  }
+
   if (!connected) {
     return (
       <div className="ai-page">

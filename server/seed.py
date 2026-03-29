@@ -146,6 +146,12 @@ def seed():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
+
+    # Network 1 is always "Your Network" — user's real devices
+    your_net = Network(name="Your Network", description="Your actual network devices")
+    db.add(your_net)
+    db.flush()
+
     configs = [
         ("Small Office", "1 router, 1 switch, 5 desktops", 1, 1, 5, 0, 0, 0, 0),
         ("Home Lab", "Router, 2 servers, 3 PCs, 1 Mac", 1, 1, 3, 2, 0, 0, 1),

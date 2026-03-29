@@ -17,6 +17,8 @@ export default function App() {
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
   const [page, setPage] = useState<Page>("graph");
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [showDemo, setShowDemo] = useState(false);
 
   useEffect(() => {
     fetchNetworks().then((n) => { setNetworks(n); if (n.length > 0) setCurrentNetworkId(n[0].id); }).catch(console.error);
@@ -25,16 +27,20 @@ export default function App() {
   useEffect(() => {
     setLoading(true); setSelectedDevice(null);
     fetchTopology(currentNetworkId).then((t) => { setDevices(t.devices); setConnections(t.connections); }).catch(console.error).finally(() => setLoading(false));
-  }, [currentNetworkId]);
+  }, [currentNetworkId, refreshKey]);
 
   const handleSelectDevice = useCallback((d: Device | null) => setSelectedDevice(d), []);
   const openAI = useCallback((d: Device) => { setSelectedDevice(d); setPage("ai-console"); }, []);
-  const nextNet = () => { const i = networks.findIndex(n => n.id === currentNetworkId); setCurrentNetworkId(networks[(i+1) % networks.length].id); };
-  const prevNet = () => { const i = networks.findIndex(n => n.id === currentNetworkId); setCurrentNetworkId(networks[(i-1+networks.length) % networks.length].id); };
+
+  // Demo networks = all networks except the first one ("Your Network")
+  const demoNetworks = networks.filter((_, i) => i > 0);
+  const nextDemo = () => { if (demoNetworks.length === 0) return; const i = demoNetworks.findIndex(n => n.id === currentNetworkId); setCurrentNetworkId(demoNetworks[(i+1) % demoNetworks.length].id); };
+  const prevDemo = () => { if (demoNetworks.length === 0) return; const i = demoNetworks.findIndex(n => n.id === currentNetworkId); setCurrentNetworkId(demoNetworks[(i-1+demoNetworks.length) % demoNetworks.length].id); };
   const currentNetwork = networks.find(n => n.id === currentNetworkId);
+  const isYourNetwork = networks.length > 0 && currentNetworkId === networks[0].id;
 
   if (loading) return <div className="app-loading"><div className="loader" /><p>Loading...</p></div>;
-  if (page === "add-device") return <AddDeviceWizard onClose={() => setPage("graph")} onAdd={() => setPage("graph")} />;
+  if (page === "add-device") return <AddDeviceWizard networkId={networks.length > 0 ? networks[0].id : 1} onClose={() => setPage("graph")} onAdded={() => { setCurrentNetworkId(networks[0].id); setShowDemo(false); setRefreshKey(k => k + 1); setPage("graph"); }} />;
   if (page === "ai-console" && selectedDevice) return <AIConsole device={selectedDevice} totalDevices={devices.length} onBack={() => setPage("graph")} />;
 
   return (
@@ -44,12 +50,17 @@ export default function App() {
           <h1 className="topbar-title">Discovery <span className="topbar-amp">&amp;</span> Manage</h1>
         </div>
         <div className="topbar-right">
-          {networks.length > 1 && (
-            <div className="network-switcher">
-              <button className="net-nav-btn" onClick={prevNet}>&lt;</button>
+          {/* Your Network / Demo toggle */}
+          <div className="network-switcher">
+            <button className={`net-tab ${isYourNetwork && !showDemo ? "active" : ""}`} onClick={() => { setShowDemo(false); setCurrentNetworkId(networks[0].id); }}>Your Network</button>
+            <button className={`net-tab ${showDemo ? "active" : ""}`} onClick={() => { setShowDemo(true); if (demoNetworks.length > 0) setCurrentNetworkId(demoNetworks[0].id); }}>Demo</button>
+          </div>
+          {showDemo && demoNetworks.length > 1 && (
+            <div className="demo-nav">
+              <button className="net-nav-btn" onClick={prevDemo}>&lt;</button>
               <span className="net-name">{currentNetwork?.name}</span>
-              <span className="net-idx">{networks.findIndex(n=>n.id===currentNetworkId)+1}/{networks.length}</span>
-              <button className="net-nav-btn" onClick={nextNet}>&gt;</button>
+              <span className="net-idx">{demoNetworks.findIndex(n=>n.id===currentNetworkId)+1}/{demoNetworks.length}</span>
+              <button className="net-nav-btn" onClick={nextDemo}>&gt;</button>
             </div>
           )}
           <div className="topbar-stats">

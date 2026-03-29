@@ -11,7 +11,12 @@
 .stat-dot.managed { background:var(--accent); }
 .add-btn { display:flex; align-items:center; gap:8px; padding:10px 20px; background:linear-gradient(135deg,var(--purple),var(--accent)); color:#fff; font-size:13px; font-weight:600; border:none; border-radius:var(--radius-sm); cursor:pointer; transition:all var(--transition); }
 .add-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,166,125,0.2); }
-.network-switcher { display:flex; align-items:center; gap:8px; padding:4px 6px; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); }
+.network-switcher { display:flex; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
+.net-tab { padding:7px 16px; background:none; border:none; color:var(--text-secondary); font-size:12px; font-weight:600; cursor:pointer; transition:all var(--transition); border-right:1px solid var(--border); }
+.net-tab:last-child { border-right:none; }
+.net-tab:hover { color:var(--text-primary); background:var(--bg-card); }
+.net-tab.active { color:var(--accent); background:var(--accent-dim); }
+.demo-nav { display:flex; align-items:center; gap:8px; }
 .net-nav-btn { width:28px; height:28px; background:none; border:1px solid var(--border); border-radius:6px; color:var(--text-secondary); cursor:pointer; font-size:14px; }
 .net-nav-btn:hover { border-color:var(--accent); color:var(--accent); }
 .net-name { font-size:13px; font-weight:600; color:var(--text-primary); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
