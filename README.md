@@ -244,17 +244,7 @@ OpenBee works with **any Windows or Unix-like machine**. If it has a network int
 
 ## 🔮 Coming Soon
 
-🔌 **More Protocols** — support for RDP, Telnet, and WMI connections
-
-🌐 **Web API Management** — connect to devices that only offer management through web interfaces (routers, switches, firewalls, appliances)
-
-📦 **Agent Installation from Web Console** — install the OpenBee agent directly from the UI onto any machine
-
-🐝 **Custom Bee Agent** — a lightweight agent for non-standard machines and devices behind strict firewalls (backconnect mode — the bee calls home to the Hive Mind instead of the other way around)
-
-🔄 **Continuous Monitoring** — bees that keep watching for changes in your hive
-
-⏰ **Automation** — schedule recurring tasks to run on any device at set intervals (e.g. clean temp files every night, pull latest code every hour, restart a service weekly)
+Check out the [Roadmap](ROADMAP.md) for planned features and what's next for OpenBee.
 
 ---
 

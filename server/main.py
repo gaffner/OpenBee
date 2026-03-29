@@ -1,11 +1,17 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import json
 
 from database import get_db, engine, Base
 from models import Device, Connection, Network
 from schemas import DeviceOut, DeviceCreate, ConnectionOut, TopologyOut, NetworkOut
 from mac_vendor import lookup_vendor, lookup_vendor_category
+from ai_agent import AIAgent
+from connectors.ssh_connector import SSHConnector
+from connectors.winrm_connector import WinRMConnector
+import cred_store
 
 app = FastAPI(title="Discovery & Manage", version="0.1.0")
 
@@ -78,3 +84,77 @@ def mac_lookup(mac: str):
     vendor = lookup_vendor(mac)
     category = lookup_vendor_category(vendor) if vendor else "unknown"
     return {"mac": mac, "vendor": vendor, "vendor_category": category}
+
+
+# ── Credential Store ─────────────────────────────────────────────────────
+
+
+@app.post("/api/devices/{device_id}/credentials")
+def store_credentials(
+    device_id: int,
+    username: str = Query(...),
+    password: str = Query(...),
+    protocol: str = Query(...),
+    use_ssl: bool = Query(False),
+    db: Session = Depends(get_db),
+):
+    """Store credentials for a device so AI chat can connect to it."""
+    device = db.query(Device).filter(Device.id == device_id).first()
+    if not device:
+        raise HTTPException(status_code=404, detail="Device not found")
+    cred_store.store(device_id, device.ip, username, password, protocol, use_ssl)
+    return {"status": "ok", "device_id": device_id}
+
+
+# ── AI Chat (SSE) ────────────────────────────────────────────────────────
+
+ai_agent = AIAgent()
+
+
+@app.get("/api/devices/{device_id}/chat")
+def ai_chat_stream(
+    device_id: int,
+    prompt: str = Query(...),
+    db: Session = Depends(get_db),
+):
+    """SSE endpoint — streams AI agent steps for a device."""
+    device = db.query(Device).filter(Device.id == device_id).first()
+    if not device:
+        def _err():
+            yield f"data: {json.dumps({'type': 'error', 'text': 'Device not found'})}\n\n"
+        return StreamingResponse(_err(), media_type="text/event-stream")
+
+    creds = cred_store.get(device_id)
+    if not creds:
+        def _err():
+            yield f"data: {json.dumps({'type': 'error', 'text': 'No credentials stored for this device. Please provide credentials first.'})}\n\n"
+        return StreamingResponse(_err(), media_type="text/event-stream")
+
+    host_info = {
+        "hostname": device.hostname,
+        "os_name": device.os_type,
+        "protocol": creds["protocol"],
+    }
+
+    def _stream():
+        connector = None
+        try:
+            if creds["protocol"] == "ssh":
+                connector = SSHConnector(creds["host"], creds["username"], creds["password"])
+            else:
+                connector = WinRMConnector(creds["host"], creds["username"], creds["password"], use_ssl=creds.get("use_ssl", False))
+
+            for step in ai_agent.run(prompt, connector, host_info, session_id=device_id):
+                yield f"data: {json.dumps(step)}\n\n"
+
+        except Exception as exc:
+            yield f"data: {json.dumps({'type': 'error', 'text': str(exc)})}\n\n"
+        finally:
+            if connector and creds["protocol"] == "ssh":
+                connector.close()
+
+    return StreamingResponse(
+        _stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
