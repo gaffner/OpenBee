@@ -124,17 +124,25 @@ $ New-IISSite -Name "WebApp" -PhysicalPath "C:\inetpub\wwwroot\webapp" -BindingI
 ```
 
 **You:**
-> Yes, forward port 80 from the internet to this server.
+> Now expose it to the internet.
 
 **🐝 OpenBee:**
 ```
-$ ssh admin@10.0.0.1 "iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.0.0.50:80"
-[output] (no output — success)
+🧠 Thinking... WEB-SRV-01 is behind gateway-10.0.0.1 (Cisco ASA 5506-X).
+   To expose port 80 I need to configure port forwarding on the router.
+   I have credentials for this device. Connecting via SSH...
 
-$ ssh admin@10.0.0.1 "iptables -t nat -A POSTROUTING -j MASQUERADE"
-[output] (no output — success)
+$ ssh admin@10.0.0.1 "show running-config | include interface"
+[output] interface GigabitEthernet0/0 (outside)
+         interface GigabitEthernet0/1 (inside)
 
-✓ Port forwarding configured! External port 80 → 10.0.0.50:80 (WEB-SRV-01).
+$ ssh admin@10.0.0.1 "object network WEB-SRV-01"
+$ ssh admin@10.0.0.1 "host 10.0.0.50"
+$ ssh admin@10.0.0.1 "nat (inside,outside) static interface service tcp 80 80"
+[output] Configuration applied.
+
+✓ Port forwarding configured on Cisco ASA 5506-X (gateway-10.0.0.1).
+  External port 80 → 10.0.0.50:80 (WEB-SRV-01).
   Your web app is now accessible from the internet.
 ```
 
