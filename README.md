@@ -308,8 +308,8 @@ From the web console, generate an agent installer. Run it on the target machine.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/galtshuler/Discovery.git
-cd Discovery
+git clone https://github.com/gaffner/OpenBee.git
+cd OpenBee
 ```
 
 ### 2. Set up the backend (Python)
