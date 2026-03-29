@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screens/openbee-logo.png" alt="OpenBee Logo" width="200"/>
+  <img src="screens/openbee-logo.png" alt="OpenBee Logo" width="600"/>
 </p>
 
 <p align="center">
@@ -291,6 +291,21 @@ From the web console, generate an agent installer. Run it on the target machine.
                     fetch files  run local
                     from hive   python scripts
 ```
+
+---
+
+## ⚠️ Disclaimer
+
+**OpenBee is provided "as is", without warranty of any kind.** The authors and contributors are **not responsible** for any damage, data loss, security incidents, or any other harm resulting from the use or misuse of this software.
+
+**AI-powered operations can be dangerous.** OpenBee executes real commands on real machines. AI agents may make mistakes, misinterpret instructions, or take unexpected actions. **Human supervision is required at all times**, especially when operating on critical systems, production environments, or sensitive assets.
+
+By using OpenBee, you acknowledge that:
+- You are solely responsible for any actions taken by the software on your systems.
+- AI-generated commands should be reviewed before execution on production/critical infrastructure.
+- The authors bear no liability for any consequences arising from the use of this tool.
+
+**Use responsibly. Always have backups. Always supervise.**
 
 ---
 
