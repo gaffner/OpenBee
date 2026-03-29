@@ -99,10 +99,10 @@ OpenBee maintains a **global context** of your entire network. This means the AI
 
 ### Example 1: Set Up a Web Server from Scratch
 
-You want to deploy a web app. IIS on the server, repo from GitHub, and port forwarding on the router so it's accessible from the internet.
+You want to deploy a web app. IIS on the server, repo from GitHub, and open it to the internet.
 
 **You (on WEB-SRV-01):**
-> Set up IIS for me, clone the repo https://github.com/acme/webapp into C:\inetpub\wwwroot\webapp, and configure it as a new IIS site on port 80.
+> Set up IIS, clone https://github.com/acme/webapp, and open it to the internet.
 
 **🐝 OpenBee:**
 ```
@@ -115,22 +115,9 @@ $ git clone https://github.com/acme/webapp C:\inetpub\wwwroot\webapp
 $ New-IISSite -Name "WebApp" -PhysicalPath "C:\inetpub\wwwroot\webapp" -BindingInformation "*:80:"
 [output] Site "WebApp" created successfully.
 
-✓ Done! IIS is installed, the repo is cloned to C:\inetpub\wwwroot\webapp,
-  and the site "WebApp" is live on port 80. You can access it at
-  http://WEB-SRV-01 from inside the network.
-
-  Want me to also configure port forwarding on your router (gateway-10.0.0.1)
-  so it's accessible from the internet?
-```
-
-**You:**
-> Open it to the internet.
-
-**🐝 OpenBee:**
-```
 🧠 Thinking... WEB-SRV-01 is behind gateway-10.0.0.1 (Cisco ASA 5506-X).
-   To expose port 80 I need to configure port forwarding on the router.
-   I have credentials for this device. Connecting via SSH...
+   To open it to the internet I need to configure port forwarding on the
+   router. I have credentials for this device. Connecting via SSH...
 
 $ ssh admin@10.0.0.1 "show running-config | include interface"
 [output] interface GigabitEthernet0/0 (outside)
@@ -141,7 +128,8 @@ $ ssh admin@10.0.0.1 "host 10.0.0.50"
 $ ssh admin@10.0.0.1 "nat (inside,outside) static interface service tcp 80 80"
 [output] Configuration applied.
 
-✓ Port forwarding configured on Cisco ASA 5506-X (gateway-10.0.0.1).
+✓ All done! IIS is installed, the repo is cloned, and the site is live.
+  I also configured port forwarding on your Cisco ASA 5506-X router.
   External port 80 → 10.0.0.50:80 (WEB-SRV-01).
   Your web app is now accessible from the internet.
 ```
