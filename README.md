@@ -8,12 +8,12 @@
 </p>
 
 <p align="center">
-  <a href="#installation--setup">Setup</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#how-it-works">How It Works</a> •
   <a href="#ai-console">AI Console</a> •
   <a href="#examples">Examples</a> •
-  <a href="#supported-platforms">Platforms</a>
+  <a href="#supported-platforms">Platforms</a> •
+  <a href="#installation--setup">Installation</a>
 </p>
 
 ---
@@ -37,134 +37,6 @@ No more clicking through UIs from the year 2000. No more memorizing PowerShell c
 </p>
 
 *Your entire network, visualized as a hive. Click any device to see its details — IP, MAC, OS, hardware, services, and listening ports. Managed devices glow. Unmanaged devices are discovered automatically. Click "Open AI Console" to start talking to any device.*
-
----
-
-## �️ Installation & Setup
-
-### Prerequisites
-
-- **Python 3.11+** — [python.org](https://www.python.org/downloads/)
-- **Node.js 20+** — [nodejs.org](https://nodejs.org/)
-- **Git** — [git-scm.com](https://git-scm.com/)
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/galtshuler/Discovery.git
-cd Discovery
-```
-
-### 2. Set up the backend (Python)
-
-<details>
-<summary><strong>Windows (PowerShell)</strong></summary>
-
-```powershell
-cd server
-python -m venv venv
-.\venv\Scripts\pip install -r requirements.txt
-
-# Create .env with your AI config
-copy .env.example .env
-# Edit .env and add your GITHUB_TOKEN (get one at https://github.com/settings/tokens)
-
-# Seed the database with demo topologies
-.\venv\Scripts\python seed.py
-
-# Start the server
-.\venv\Scripts\python -m uvicorn main:app --reload --port 8000
-```
-</details>
-
-<details>
-<summary><strong>Linux / macOS (Bash)</strong></summary>
-
-```bash
-cd server
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Create .env with your AI config
-cp .env.example .env
-# Edit .env and add your GITHUB_TOKEN (get one at https://github.com/settings/tokens)
-
-# Seed the database with demo topologies
-python seed.py
-
-# Start the server
-uvicorn main:app --reload --port 8000
-```
-</details>
-
-The backend runs on **http://localhost:8000**. API docs at **http://localhost:8000/docs**.
-
-### 3. Set up the frontend (React)
-
-Open a **new terminal**:
-
-<details>
-<summary><strong>Windows (PowerShell)</strong></summary>
-
-```powershell
-cd client
-npm install
-npm run dev
-```
-</details>
-
-<details>
-<summary><strong>Linux / macOS (Bash)</strong></summary>
-
-```bash
-cd client
-npm install
-npm run dev
-```
-</details>
-
-The frontend runs on **http://localhost:5173** and proxies API calls to the backend.
-
-### 4. Open in browser
-
-Go to **http://localhost:5173** — you'll see "Your Network" (empty) with a Demo toggle to explore sample topologies.
-
-### Getting an AI token
-
-The AI Console requires a **GitHub Personal Access Token** with Models API access:
-
-1. Go to [github.com/settings/tokens](https://github.com/settings/tokens)
-2. Generate a new token (classic) — no special scopes needed, just the default
-3. Paste it into `server/.env` as `GITHUB_TOKEN=ghp_your_token_here`
-
-Without a token, everything works except the AI Console chat.
-
-### Enabling WinRM on Windows targets
-
-To manage Windows machines, WinRM must be enabled on the target:
-
-```powershell
-# Run on the target Windows machine (as Administrator)
-Enable-PSRemoting -Force
-winrm set winrm/config/service/auth @{Basic="true"}
-winrm set winrm/config/service @{AllowUnencrypted="true"}
-```
-
-### Enabling SSH on Linux/macOS targets
-
-SSH is usually enabled by default. If not:
-
-```bash
-# Ubuntu/Debian
-sudo apt install openssh-server
-sudo systemctl enable --now ssh
-
-# macOS
-# System Settings → General → Sharing → Remote Login → On
-```
-
----
 
 ## �🚀 Getting Started
 
@@ -418,6 +290,140 @@ From the web console, generate an agent installer. Run it on the target machine.
                     fetch files  run local
                     from hive   python scripts
 ```
+
+---
+
+
+---
+
+<details>
+<summary><h2>🛠️ Installation & Setup</h2></summary>
+
+### Prerequisites
+
+- **Python 3.11+** — [python.org](https://www.python.org/downloads/)
+- **Node.js 20+** — [nodejs.org](https://nodejs.org/)
+- **Git** — [git-scm.com](https://git-scm.com/)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/galtshuler/Discovery.git
+cd Discovery
+```
+
+### 2. Set up the backend (Python)
+
+<details>
+<summary><strong>Windows (PowerShell)</strong></summary>
+
+```powershell
+cd server
+python -m venv venv
+.\venv\Scripts\pip install -r requirements.txt
+
+# Create .env with your AI config
+copy .env.example .env
+# Edit .env and add your GITHUB_TOKEN (get one at https://github.com/settings/tokens)
+
+# Seed the database with demo topologies
+.\venv\Scripts\python seed.py
+
+# Start the server
+.\venv\Scripts\python -m uvicorn main:app --reload --port 8000
+```
+</details>
+
+<details>
+<summary><strong>Linux / macOS (Bash)</strong></summary>
+
+```bash
+cd server
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Create .env with your AI config
+cp .env.example .env
+# Edit .env and add your GITHUB_TOKEN (get one at https://github.com/settings/tokens)
+
+# Seed the database with demo topologies
+python seed.py
+
+# Start the server
+uvicorn main:app --reload --port 8000
+```
+</details>
+
+The backend runs on **http://localhost:8000**. API docs at **http://localhost:8000/docs**.
+
+### 3. Set up the frontend (React)
+
+Open a **new terminal**:
+
+<details>
+<summary><strong>Windows (PowerShell)</strong></summary>
+
+```powershell
+cd client
+npm install
+npm run dev
+```
+</details>
+
+<details>
+<summary><strong>Linux / macOS (Bash)</strong></summary>
+
+```bash
+cd client
+npm install
+npm run dev
+```
+</details>
+
+The frontend runs on **http://localhost:5173** and proxies API calls to the backend.
+
+### 4. Open in browser
+
+Go to **http://localhost:5173** — you'll see "Your Network" (empty) with a Demo toggle to explore sample topologies.
+
+### Getting an AI token
+
+The AI Console requires a **GitHub Personal Access Token** with Models API access:
+
+1. Go to [github.com/settings/tokens](https://github.com/settings/tokens)
+2. Generate a new token (classic) — no special scopes needed, just the default
+3. Paste it into `server/.env` as `GITHUB_TOKEN=ghp_your_token_here`
+
+Without a token, everything works except the AI Console chat.
+
+### Enabling WinRM on Windows targets
+
+To manage Windows machines, WinRM must be enabled on the target:
+
+```powershell
+# Run on the target Windows machine (as Administrator)
+Enable-PSRemoting -Force
+winrm set winrm/config/service/auth @{Basic="true"}
+winrm set winrm/config/service @{AllowUnencrypted="true"}
+```
+
+### Enabling SSH on Linux/macOS targets
+
+SSH is usually enabled by default. If not:
+
+```bash
+# Ubuntu/Debian
+sudo apt install openssh-server
+sudo systemctl enable --now ssh
+
+# macOS
+# System Settings → General → Sharing → Remote Login → On
+```
+
+---
+
+</details>
 
 ---
 
