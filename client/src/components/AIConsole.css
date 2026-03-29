@@ -38,3 +38,37 @@
 .ai-input::placeholder { color:var(--text-muted); }
 .ai-send { padding:16px 20px; background:var(--accent); border:none; color:#fff; font-weight:600; cursor:pointer; }
 .ai-send:disabled { opacity:.3; cursor:not-allowed; }
+
+/* Credentials form */
+.ai-cred-wrap { flex:1; display:flex; align-items:center; justify-content:center; }
+.ai-cred-card { width:440px; background:var(--bg-base); border:1px solid var(--border); border-radius:var(--radius-lg); padding:40px; box-shadow:var(--shadow); animation:fadeInScale .4s ease-out; }
+.ai-cred-card h2 { font-size:22px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+.ai-cred-sub { font-size:14px; color:var(--text-secondary); margin-bottom:28px; }
+.ai-cred-sub strong { color:var(--accent); }
+.ai-cred-field { margin-bottom:18px; }
+.ai-cred-field label { display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text-muted); margin-bottom:6px; }
+.ai-cred-field input { width:100%; padding:12px 14px; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-size:14px; outline:none; }
+.ai-cred-field input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-dim); }
+.ai-cred-protocols { display:flex; gap:8px; }
+.ai-cred-proto { padding:10px 20px; background:var(--bg-elevated); border:2px solid var(--border); border-radius:var(--radius-sm); color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer; transition:all var(--transition); }
+.ai-cred-proto:hover { border-color:var(--accent); color:var(--accent); }
+.ai-cred-proto.active { border-color:var(--accent); background:var(--accent-dim); color:var(--accent); }
+.ai-cred-error { color:var(--danger); font-size:13px; margin-bottom:12px; }
+.ai-cred-connect { width:100%; padding:14px; background:linear-gradient(135deg,var(--purple),var(--accent)); color:#fff; font-size:15px; font-weight:700; border:none; border-radius:var(--radius-sm); cursor:pointer; margin-top:8px; transition:all var(--transition); }
+.ai-cred-connect:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(0,166,125,0.25); }
+
+/* Sidebar grid */
+.ai-sidebar-grid { display:grid; grid-template-columns:auto 1fr; gap:4px 10px; font-size:12px; color:var(--text-secondary); margin-top:10px; }
+.ai-sidebar-grid span:nth-child(even) { color:var(--text-primary); }
+
+/* Command output blocks */
+.ai-msg-cmd { max-width:90%; align-self:flex-start; background:var(--bg-base); border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; animation:fadeIn .3s ease-out; }
+.ai-cmd-header { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-elevated); font-family:monospace; font-size:13px; color:var(--text-primary); font-weight:600; border-bottom:1px solid var(--border); }
+.ai-cmd-icon { color:var(--accent); font-weight:700; }
+.ai-cmd-exit { font-size:11px; padding:1px 8px; border-radius:4px; font-weight:600; margin-left:auto; }
+.ai-cmd-exit.ok { background:rgba(16,185,129,0.1); color:var(--success); }
+.ai-cmd-exit.err { background:rgba(239,68,68,0.1); color:var(--danger); }
+.ai-cmd-output { margin:0; padding:12px 14px; font-family:monospace; font-size:12px; color:var(--text-secondary); white-space:pre-wrap; word-break:break-all; max-height:300px; overflow-y:auto; background:var(--bg-base); }
+
+/* Error block */
+.ai-msg-error .ai-msg-content { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:var(--danger); }
