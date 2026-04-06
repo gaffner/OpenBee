@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import StreamingResponse
 import json
+import logging
 
 from database import get_driver, init_db, next_id, neo4j_config
 from models import node_to_device, node_to_network
@@ -10,7 +11,10 @@ from mac_vendor import lookup_vendor, lookup_vendor_category
 from ai_agent import AIAgent
 from connectors.ssh_connector import SSHConnector
 from connectors.winrm_connector import WinRMConnector
+from discovery import run_discovery
 import cred_store
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Discovery & Manage", version="0.2.0")
 
@@ -61,7 +65,7 @@ def get_device(device_id: int):
 
 
 @app.post("/api/devices", response_model=DeviceOut)
-def create_device(payload: DeviceCreate):
+def create_device(payload: DeviceCreate, background_tasks: BackgroundTasks):
     data = payload.model_dump(exclude={"cred_username", "cred_password"})
     mac = data.get("mac")
     if mac and not data.get("vendor") and data.get("managed") == 0:
@@ -98,8 +102,181 @@ def create_device(payload: DeviceCreate):
             device_id, data["ip"],
             payload.cred_username, payload.cred_password, protocol,
         )
+        # Trigger background discovery scan
+        background_tasks.add_task(
+            _run_scan, device_id, data["ip"], data["os_type"],
+            data["network_id"], protocol,
+            payload.cred_username, payload.cred_password,
+        )
 
     return get_device(device_id)
+
+
+def _run_scan(
+    device_id: int, ip: str, os_type: str, network_id: int,
+    protocol: str, username: str, password: str,
+):
+    """Background task: connect to device, run discovery, create neighbors."""
+    connector = None
+    try:
+        if protocol == "ssh":
+            connector = SSHConnector(ip, username, password)
+        else:
+            connector = WinRMConnector(ip, username, password)
+
+        disco = run_discovery(connector, os_type, ip)
+
+        # Update the scanned device with discovered sysinfo + ports
+        sysinfo = disco["sysinfo"]
+        updates = {}
+        if sysinfo.get("HOSTNAME"):
+            updates["hostname"] = sysinfo["HOSTNAME"]
+        if sysinfo.get("CPU"):
+            updates["cpu"] = sysinfo["CPU"]
+        if sysinfo.get("ram_gb"):
+            updates["ram_gb"] = sysinfo["ram_gb"]
+        if sysinfo.get("UPTIME"):
+            updates["uptime"] = sysinfo["UPTIME"]
+        if disco["listening_ports"]:
+            updates["open_ports"] = json.dumps(disco["listening_ports"])
+
+        if updates:
+            set_clause = ", ".join(f"d.{k} = ${k}" for k in updates)
+            with get_driver().session() as session:
+                session.run(
+                    f"MATCH (d:Device {{id: $did}}) SET {set_clause}",
+                    did=device_id, **updates,
+                )
+
+        # Create unmanaged neighbor devices + connections
+        if disco["neighbors"]:
+            _create_neighbors(
+                device_id, network_id, disco["neighbors"],
+                disco["gateways"], disco["dns_servers"],
+            )
+
+        logger.info(
+            f"Discovery scan complete for device {device_id} ({ip}): "
+            f"{len(disco['neighbors'])} neighbors found"
+        )
+
+    except Exception as e:
+        logger.error(f"Discovery scan failed for device {device_id}: {e}")
+    finally:
+        if connector and protocol == "ssh":
+            connector.close()
+
+
+def _create_neighbors(
+    source_device_id: int, network_id: int,
+    neighbors: list[dict], gateways: list[str], dns_servers: list[str],
+):
+    """Create unmanaged Device nodes and CONNECTS_TO relationships."""
+    gateway_ips = set(gateways)
+    dns_ips = set(dns_servers)
+
+    def _do(tx):
+        for nb in neighbors:
+            ip = nb["ip"]
+            mac = nb.get("mac")
+
+            # Skip if device with this IP already exists in this network
+            existing = tx.run(
+                "MATCH (d:Device {ip: $ip, network_id: $nid}) RETURN d.id AS id",
+                ip=ip, nid=network_id,
+            ).single()
+            if existing:
+                # Just ensure connection exists
+                tx.run(
+                    "MATCH (s:Device {id: $sid}), (t:Device {id: $tid}) "
+                    "MERGE (s)-[:CONNECTS_TO {connection_type: 'ethernet'}]->(t)",
+                    sid=source_device_id, tid=existing["id"],
+                )
+                continue
+
+            # Determine device type
+            if ip in gateway_ips:
+                device_type = "router"
+                hostname = f"gateway-{ip}"
+            elif ip in dns_ips:
+                device_type = "server"
+                hostname = f"dns-{ip}"
+            else:
+                device_type = "pc"
+                hostname = f"device-{ip}"
+
+            # Look up MAC vendor
+            vendor = lookup_vendor(mac) if mac else None
+            vendor_category = lookup_vendor_category(vendor) if vendor else None
+
+            new_id = next_id(tx, "device")
+            conn_id = next_id(tx, "connection")
+
+            props = {
+                "id": new_id,
+                "network_id": network_id,
+                "hostname": hostname,
+                "ip": ip,
+                "mac": mac,
+                "device_type": device_type,
+                "os_type": "unknown",
+                "manufacturer": None,
+                "vendor": vendor,
+                "vendor_category": vendor_category,
+                "model": None,
+                "ram_gb": None,
+                "cpu": None,
+                "cpu_usage": None,
+                "uptime": None,
+                "status": "online",
+                "label": None,
+                "connection_method": None,
+                "services": None,
+                "open_ports": None,
+                "users_connected": 0,
+                "last_login": None,
+                "managed": 0,
+            }
+
+            tx.run(
+                "MATCH (n:Network {id: $nid}) "
+                "CREATE (d:Device $props)-[:BELONGS_TO]->(n)",
+                props=props, nid=network_id,
+            )
+            tx.run(
+                "MATCH (s:Device {id: $sid}), (t:Device {id: $tid}) "
+                "CREATE (s)-[:CONNECTS_TO {id: $cid, "
+                "connection_type: 'ethernet', port: null, "
+                "bandwidth: null}]->(t)",
+                sid=source_device_id, tid=new_id, cid=conn_id,
+            )
+
+    with get_driver().session() as session:
+        session.execute_write(_do)
+
+
+@app.post("/api/devices/{device_id}/scan")
+def scan_device(device_id: int, background_tasks: BackgroundTasks):
+    """Manually trigger a discovery scan on a device."""
+    with get_driver().session() as session:
+        result = session.run(
+            "MATCH (d:Device {id: $id}) RETURN d", id=device_id
+        )
+        record = result.single()
+    if not record:
+        raise HTTPException(status_code=404, detail="Device not found")
+
+    creds = cred_store.get(device_id)
+    if not creds:
+        raise HTTPException(status_code=400, detail="No credentials for device")
+
+    device = node_to_device(record["d"])
+    background_tasks.add_task(
+        _run_scan, device_id, device["ip"], device["os_type"],
+        device["network_id"], creds["protocol"],
+        creds["username"], creds["password"],
+    )
+    return {"status": "scan_started", "device_id": device_id}
 
 
 @app.get("/api/connections", response_model=list[ConnectionOut])
