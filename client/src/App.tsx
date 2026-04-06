@@ -20,6 +20,7 @@ export default function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showDemo, setShowDemo] = useState(false);
   const [neo4jConfig, setNeo4jConfig] = useState<Neo4jConfig | null>(null);
+  const [showUnmanaged, setShowUnmanaged] = useState(true);
 
   useEffect(() => {
     fetchNeo4jConfig().then(setNeo4jConfig).catch(console.error);
@@ -86,12 +87,16 @@ export default function App() {
             <span className="stat-item"><span className="stat-dot online" />{devices.filter(d=>d.status==="online").length} online</span>
             <span className="stat-item"><span className="stat-dot managed" />{devices.filter(d=>d.managed).length} managed</span>
           </div>
+          <label className="unmanaged-toggle">
+            <input type="checkbox" checked={showUnmanaged} onChange={e => setShowUnmanaged(e.target.checked)} />
+            <span>Unmanaged</span>
+          </label>
           <button className="add-btn" onClick={() => setPage("add-device")}>+ Add Device</button>
         </div>
       </header>
       <main className="main-layout">
         <InfoPanel device={selectedDevice} onOpenAI={() => selectedDevice && openAI(selectedDevice)} />
-        <GraphView devices={devices} selectedDeviceId={selectedDevice?.id ?? null} onSelectDevice={handleSelectDevice} networkId={currentNetworkId} neo4jConfig={neo4jConfig} />
+        <GraphView devices={devices} selectedDeviceId={selectedDevice?.id ?? null} onSelectDevice={handleSelectDevice} networkId={currentNetworkId} neo4jConfig={neo4jConfig} showUnmanaged={showUnmanaged} />
       </main>
     </div>
   );

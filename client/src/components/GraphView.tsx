@@ -9,6 +9,7 @@ interface Props {
   onSelectDevice: (device: Device | null) => void;
   networkId: number;
   neo4jConfig: Neo4jConfig | null;
+  showUnmanaged: boolean;
 }
 
 export default function GraphView({
@@ -17,6 +18,7 @@ export default function GraphView({
   onSelectDevice,
   networkId,
   neo4jConfig,
+  showUnmanaged,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const visRef = useRef<any>(null);
@@ -71,11 +73,17 @@ export default function GraphView({
   useEffect(() => {
     if (!containerRef.current || !neo4jConfig) return;
 
-    const cypher = [
-      `MATCH (d:Device {network_id: ${networkId}})`,
-      `OPTIONAL MATCH (d)-[r:CONNECTS_TO]-(d2:Device {network_id: ${networkId}})`,
-      `RETURN d, r, d2`,
-    ].join(" ");
+    const cypher = showUnmanaged
+      ? [
+          `MATCH (d:Device {network_id: ${networkId}})`,
+          `OPTIONAL MATCH (d)-[r:CONNECTS_TO]-(d2:Device {network_id: ${networkId}})`,
+          `RETURN d, r, d2`,
+        ].join(" ")
+      : [
+          `MATCH (d:Device {network_id: ${networkId}, managed: 1})`,
+          `OPTIONAL MATCH (d)-[r:CONNECTS_TO]-(d2:Device {network_id: ${networkId}, managed: 1})`,
+          `RETURN d, r, d2`,
+        ].join(" ");
 
     const config = {
       containerId: "neovis-container",
@@ -284,7 +292,7 @@ export default function GraphView({
     return () => {
       viz.clearNetwork();
     };
-  }, [networkId, neo4jConfig, devices.length]);
+  }, [networkId, neo4jConfig, devices.length, showUnmanaged]);
 
   // Sync selection highlight
   useEffect(() => {
