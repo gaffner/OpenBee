@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import NeoVis from "neovis.js";
 import type { Device, Neo4jConfig } from "../types";
+import { getDeviceIcon } from "../assets/icons";
 import "./GraphView.css";
 
 interface Props {
@@ -231,16 +232,17 @@ export default function GraphView({
                 if (t === "router") return 35;
                 if (t === "switch") return 28;
                 if (t === "server" || t === "dc") return 30;
-                return 20;
+                return 22;
               },
-              shape: (node: any) => {
-                if (node.properties.managed === 0) return "diamond";
-                const t = node.properties.device_type;
-                if (t === "router") return "triangle";
-                if (t === "switch") return "square";
-                if (t === "server") return "hexagon";
-                if (t === "dc") return "star";
-                return "dot";
+              shape: () => "image",
+              image: (node: any) => {
+                const p = node.properties;
+                return getDeviceIcon(
+                  p.device_type,
+                  p.os_type,
+                  p.vendor_category,
+                  p.model,
+                );
               },
               borderWidth: (node: any) =>
                 node.properties.managed === 0 ? 1.5 : 2.5,
