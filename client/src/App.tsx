@@ -87,10 +87,12 @@ export default function App() {
             <span className="stat-item"><span className="stat-dot online" />{devices.filter(d=>d.status==="online").length} online</span>
             <span className="stat-item"><span className="stat-dot managed" />{devices.filter(d=>d.managed).length} managed</span>
           </div>
-          <label className="unmanaged-toggle">
-            <input type="checkbox" checked={showUnmanaged} onChange={e => setShowUnmanaged(e.target.checked)} />
+          <div className="unmanaged-toggle" onClick={() => setShowUnmanaged(u => !u)}>
+            <div className={`toggle-switch ${showUnmanaged ? "on" : "off"}`}>
+              <div className="toggle-knob">{showUnmanaged ? "✓" : "✕"}</div>
+            </div>
             <span>Unmanaged</span>
-          </label>
+          </div>
           <button className="add-btn" onClick={() => setPage("add-device")}>+ Add Device</button>
         </div>
       </header>
