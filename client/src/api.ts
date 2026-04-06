@@ -1,6 +1,12 @@
-import type { Topology, Device, Network } from "./types";
+import type { Topology, Device, Network, Neo4jConfig } from "./types";
 
 const BASE = "/api";
+
+export async function fetchNeo4jConfig(): Promise<Neo4jConfig> {
+  const res = await fetch(`${BASE}/neo4j-config`);
+  if (!res.ok) throw new Error("Failed to fetch Neo4j config");
+  return res.json();
+}
 
 export async function fetchNetworks(): Promise<Network[]> {
   const res = await fetch(`${BASE}/networks`);

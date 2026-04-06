@@ -1,3 +1,9 @@
+export interface Neo4jConfig {
+  uri: string;
+  user: string;
+  password: string;
+}
+
 export interface DeviceService {
   name: string;
   displayName?: string;

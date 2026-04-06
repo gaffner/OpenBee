@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import type { Device, Connection, Network } from "./types";
-import { fetchTopology, fetchNetworks } from "./api";
+import type { Device, Connection, Network, Neo4jConfig } from "./types";
+import { fetchTopology, fetchNetworks, fetchNeo4jConfig } from "./api";
 import GraphView from "./components/GraphView";
 import InfoPanel from "./components/InfoPanel";
 import AIConsole from "./components/AIConsole";
@@ -19,8 +19,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const [showDemo, setShowDemo] = useState(false);
+  const [neo4jConfig, setNeo4jConfig] = useState<Neo4jConfig | null>(null);
 
   useEffect(() => {
+    fetchNeo4jConfig().then(setNeo4jConfig).catch(console.error);
     fetchNetworks().then((n) => { setNetworks(n); if (n.length > 0) setCurrentNetworkId(n[0].id); }).catch(console.error);
   }, []);
 
@@ -72,7 +74,7 @@ export default function App() {
       </header>
       <main className="main-layout">
         <InfoPanel device={selectedDevice} onOpenAI={() => selectedDevice && openAI(selectedDevice)} />
-        <GraphView devices={devices} connections={connections} selectedDeviceId={selectedDevice?.id ?? null} onSelectDevice={handleSelectDevice} />
+        <GraphView devices={devices} selectedDeviceId={selectedDevice?.id ?? null} onSelectDevice={handleSelectDevice} networkId={currentNetworkId} neo4jConfig={neo4jConfig} />
       </main>
     </div>
   );
