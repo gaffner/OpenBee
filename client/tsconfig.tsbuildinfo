@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/neovis.d.ts","./src/svg.d.ts","./src/types.ts","./src/assets/icons-generated.ts","./src/assets/icons.ts","./src/components/aiconsole.tsx","./src/components/adddevicewizard.tsx","./src/components/graphview.tsx","./src/components/infopanel.tsx"],"version":"5.6.3"}

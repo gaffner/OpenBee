@@ -284,7 +284,7 @@ export default function GraphView({
     return () => {
       viz.clearNetwork();
     };
-  }, [networkId, neo4jConfig]);
+  }, [networkId, neo4jConfig, devices.length]);
 
   // Sync selection highlight
   useEffect(() => {

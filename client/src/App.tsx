@@ -33,13 +33,30 @@ export default function App() {
 
   const handleSelectDevice = useCallback((d: Device | null) => setSelectedDevice(d), []);
   const openAI = useCallback((d: Device) => { setSelectedDevice(d); setPage("ai-console"); }, []);
+  const isYourNetwork = networks.length > 0 && currentNetworkId === networks[0].id;
+
+  // Auto-refresh after adding a device (background scan creates neighbors)
+  useEffect(() => {
+    if (!isYourNetwork || page !== "graph") return;
+    const prevCount = devices.length;
+    const interval = setInterval(() => {
+      fetchTopology(currentNetworkId).then((t) => {
+        if (t.devices.length !== prevCount) {
+          setDevices(t.devices);
+          setConnections(t.connections);
+        }
+      }).catch(() => {});
+    }, 3000);
+    // Stop polling after 30s
+    const timeout = setTimeout(() => clearInterval(interval), 30000);
+    return () => { clearInterval(interval); clearTimeout(timeout); };
+  }, [currentNetworkId, refreshKey, isYourNetwork, page]);
 
   // Demo networks = all networks except the first one ("Your Network")
   const demoNetworks = networks.filter((_, i) => i > 0);
   const nextDemo = () => { if (demoNetworks.length === 0) return; const i = demoNetworks.findIndex(n => n.id === currentNetworkId); setCurrentNetworkId(demoNetworks[(i+1) % demoNetworks.length].id); };
   const prevDemo = () => { if (demoNetworks.length === 0) return; const i = demoNetworks.findIndex(n => n.id === currentNetworkId); setCurrentNetworkId(demoNetworks[(i-1+demoNetworks.length) % demoNetworks.length].id); };
   const currentNetwork = networks.find(n => n.id === currentNetworkId);
-  const isYourNetwork = networks.length > 0 && currentNetworkId === networks[0].id;
 
   if (loading) return <div className="app-loading"><div className="loader" /><p>Loading...</p></div>;
   if (page === "add-device") return <AddDeviceWizard networkId={networks.length > 0 ? networks[0].id : 1} onClose={() => setPage("graph")} onAdded={() => { setCurrentNetworkId(networks[0].id); setShowDemo(false); setRefreshKey(k => k + 1); setPage("graph"); }} />;
